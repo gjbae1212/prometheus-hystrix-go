@@ -30,7 +30,7 @@ var (
 		metricRejects, metricShortCircuits, metricTimeouts, metricFallbackSuccesses, metricFallbackFailures}
 )
 
-// Collector is collecting information that is made from hystrix-go.
+// PrometheusCollector is collecting information that is made from hystrix-go.
 type PrometheusCollector struct {
 	sync.RWMutex
 	namespace string
@@ -39,7 +39,7 @@ type PrometheusCollector struct {
 	counters  map[string]prometheus.Counter
 }
 
-// Collector_Update is to update information from hystrix-go at this time.
+// Update is to update information from hystrix-go at this time.
 func (c *PrometheusCollector) Update(r hystrix_metric.MetricResult) {
 	c.RWMutex.Lock()
 	defer c.RWMutex.Unlock()
@@ -99,7 +99,7 @@ func (c *PrometheusCollector) Update(r hystrix_metric.MetricResult) {
 	gauge.Set(r.ConcurrencyInUse)
 }
 
-// Collector_Update is to reset information (not call method).
+// Reset is to reset information (not call method).
 func (c *PrometheusCollector) Reset() {
 	c.RWMutex.Lock()
 	defer c.RWMutex.Unlock()
