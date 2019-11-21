@@ -7,7 +7,7 @@
 </p>
 
 ## OVERVIEW
-**prometheus-hystrix-go** is metric collector of prometheus for [hystrix-go](https://github.com/afex/hystrix-go)
+**prometheus-hystrix-go** is metric collector of prometheus for [hystrix-go](https://github.com/afex/hystrix-go).
 
 ## HOW TO USE
 ```go
@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-    // get wrapper of prometheus metric collector.
+        // get wrapper of prometheus metric collector.
 	wrapper := prometheus_hystrix_go.NewPrometheusCollector("your prometheus namespace", "your prometheus subsystem")
 
 	// register and initialize the collector.
@@ -33,7 +33,7 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 ```
-this example allows you get to the prometheus metric of the hystrix when you request to `/metrics` path  
+This example allows you get to the prometheus metric of the hystrix when you request to `/metrics` path.  
 
 
 ### LICENSE
