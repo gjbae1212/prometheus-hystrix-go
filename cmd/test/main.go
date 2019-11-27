@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// get hystrix wrapper
-	wrapper := prometheus_hystrix_go.NewPrometheusCollector("hystrix", "circuit")
+	wrapper := prometheus_hystrix_go.NewPrometheusCollector("hystrix", "circuit", map[string]string{"app": "test"})
 
 	// register and initialize to hystrix prometheus
 	hystrix_metric.Registry.Register(wrapper)

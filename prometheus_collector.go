@@ -106,7 +106,7 @@ func (c *PrometheusCollector) Reset() {
 }
 
 // NewPrometheusCollector returns wrapper function returning an implemented struct from MetricCollector.
-func NewPrometheusCollector(namespace, subsystem string) func(string) hystrix_metric.MetricCollector {
+func NewPrometheusCollector(namespace, subsystem string, labels map[string]string) func(string) hystrix_metric.MetricCollector {
 	return func(string) hystrix_metric.MetricCollector {
 		collector := &PrometheusCollector{
 			namespace: namespace,
@@ -117,23 +117,31 @@ func NewPrometheusCollector(namespace, subsystem string) func(string) hystrix_me
 
 		// make gauges
 		for _, metric := range gauges {
-			gauge := prometheus.NewGauge(prometheus.GaugeOpts{
+			opts := prometheus.GaugeOpts{
 				Namespace: collector.namespace,
 				Subsystem: collector.subsystem,
 				Name:      metric,
 				Help:      fmt.Sprintf("[gauge] namespace : %s, metric : %s", collector.namespace, metric),
-			})
+			}
+			if labels != nil {
+				opts.ConstLabels = labels
+			}
+			gauge := prometheus.NewGauge(opts)
 			collector.gauges[metric] = gauge
 			prometheus.MustRegister(gauge)
 		}
 		// make counters
 		for _, metric := range counters {
-			counter := prometheus.NewCounter(prometheus.CounterOpts{
+			opts := prometheus.CounterOpts{
 				Namespace: collector.namespace,
 				Subsystem: collector.subsystem,
 				Name:      metric,
 				Help:      fmt.Sprintf("[counter] namespace : %s, metric : %s", collector.namespace, metric),
-			})
+			}
+			if labels != nil {
+				opts.ConstLabels = labels
+			}
+			counter := prometheus.NewCounter(opts)
 			collector.counters[metric] = counter
 			prometheus.MustRegister(counter)
 		}

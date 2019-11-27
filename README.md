@@ -22,7 +22,8 @@ import (
 
 func main() {
         // get wrapper of prometheus metric collector.
-	wrapper := prometheus_hystrix_go.NewPrometheusCollector("your prometheus namespace", "your prometheus subsystem")
+	wrapper := prometheus_hystrix_go.NewPrometheusCollector("your prometheus namespace", "your prometheus subsystem",
+               map[string]string{"your-label"; "your-label-value"})
 
 	// register and initialize the collector.
 	hystrix_metric.Registry.Register(wrapper)
