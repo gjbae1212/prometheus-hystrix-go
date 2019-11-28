@@ -2,6 +2,7 @@ package prometheus_hystrix_go
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	hystrix_metric "github.com/afex/hystrix-go/hystrix/metric_collector"
@@ -106,11 +107,15 @@ func (c *PrometheusCollector) Reset() {
 }
 
 // NewPrometheusCollector returns wrapper function returning an implemented struct from MetricCollector.
-func NewPrometheusCollector(namespace, subsystem string, labels map[string]string) func(string) hystrix_metric.MetricCollector {
-	return func(string) hystrix_metric.MetricCollector {
+func NewPrometheusCollector(namespace string, labels map[string]string) func(string) hystrix_metric.MetricCollector {
+	return func(name string) hystrix_metric.MetricCollector {
+		name = strings.Replace(name, "/", "_", -1)
+		name = strings.Replace(name, ":", "_", -1)
+		name = strings.Replace(name, ".", "_", -1)
+		name = strings.Replace(name, "-", "_", -1)
 		collector := &PrometheusCollector{
 			namespace: namespace,
-			subsystem: subsystem,
+			subsystem: name,
 			gauges:    map[string]prometheus.Gauge{},
 			counters:  map[string]prometheus.Counter{},
 		}

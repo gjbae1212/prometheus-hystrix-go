@@ -33,8 +33,8 @@ func TestNewPrometheusCollector(t *testing.T) {
 	}
 
 	for _, t := range tests {
-		wrapper := NewPrometheusCollector(t.namespace, t.subsystem, t.labels)
-		output := wrapper("empty").(*PrometheusCollector)
+		wrapper := NewPrometheusCollector(t.namespace, t.labels)
+		output := wrapper(t.subsystem).(*PrometheusCollector)
 		for _, metric := range gauges {
 			_, ok := output.gauges[metric]
 			assert.True(ok)
@@ -55,7 +55,7 @@ func TestPrometheusCollector_Update(t *testing.T) {
 		open      bool
 	}{
 		"circuit open": {
-			collector: NewPrometheusCollector("t1", "m1", map[string]string{"allan": "test"})("empty").(*PrometheusCollector),
+			collector: NewPrometheusCollector("t1", map[string]string{"allan": "test"})("empty").(*PrometheusCollector),
 			input: hystrix_metric.MetricResult{
 				Attempts:          10,
 				Successes:         9,
@@ -73,7 +73,7 @@ func TestPrometheusCollector_Update(t *testing.T) {
 			open: false,
 		},
 		"circuit close": {
-			collector: NewPrometheusCollector("t2", "m2", map[string]string{"allan": "test"})("empty").(*PrometheusCollector),
+			collector: NewPrometheusCollector("t2", map[string]string{"allan": "test"})("empty").(*PrometheusCollector),
 			input: hystrix_metric.MetricResult{
 				Attempts:          10,
 				Successes:         9,
