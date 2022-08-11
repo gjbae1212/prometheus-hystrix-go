@@ -108,6 +108,12 @@ func (c *PrometheusCollector) Reset() {
 
 // NewPrometheusCollector returns wrapper function returning an implemented struct from MetricCollector.
 func NewPrometheusCollector(namespace string, labels map[string]string) func(string) hystrix_metric.MetricCollector {
+	return NewPrometheusCollectorWithPrometheusRegisterer(namespace, labels, nil)
+}
+
+// NewPrometheusCollectorWithPrometheusRegisterer returns wrapper function returning an implemented struct from 
+// hystrix_metric.MetricCollector with metrics registered to the custom registerer
+func NewPrometheusCollectorWithPrometheusRegisterer(namespace string, labels map[string]string, registerer prometheus.Registerer) func(string) hystrix_metric.MetricCollector {
 	return func(name string) hystrix_metric.MetricCollector {
 		name = strings.Replace(name, "/", "_", -1)
 		name = strings.Replace(name, ":", "_", -1)
@@ -133,7 +139,11 @@ func NewPrometheusCollector(namespace string, labels map[string]string) func(str
 			}
 			gauge := prometheus.NewGauge(opts)
 			collector.gauges[metric] = gauge
-			prometheus.MustRegister(gauge)
+			if registerer == nil {
+				prometheus.MustRegister(gauge)
+			} else {
+				registerer.MustRegister(guage)
+			}
 		}
 		// make counters
 		for _, metric := range counters {
@@ -148,7 +158,11 @@ func NewPrometheusCollector(namespace string, labels map[string]string) func(str
 			}
 			counter := prometheus.NewCounter(opts)
 			collector.counters[metric] = counter
-			prometheus.MustRegister(counter)
+			if registerer == nil {
+				prometheus.MustRegister(counter)
+			} else {
+				registerer.MustRegister(counter)
+			}
 		}
 		return collector
 	}
